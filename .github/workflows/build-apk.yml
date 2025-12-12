@@ -28,8 +28,16 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./gradlew
       
-    - name: Download Gradle Wrapper
-      run: ./gradlew --version
+    - name: Download Gradle Wrapper files
+      run: |
+        # 下载gradle-wrapper.jar文件
+        curl -L -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.2.2/gradle/wrapper/gradle-wrapper.jar
+        # 验证文件下载成功
+        if [ -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+          echo "Gradle wrapper jar downloaded successfully"
+        else
+          echo "Warning: Gradle wrapper jar download failed, but continuing with build"
+        fi
       
     - name: Cache Gradle packages
       uses: actions/cache@v3
