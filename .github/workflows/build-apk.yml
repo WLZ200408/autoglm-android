@@ -28,15 +28,25 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./gradlew
       
-    - name: Download Gradle Wrapper files
+    - name: Initialize Gradle Wrapper
       run: |
-        # 下载gradle-wrapper.jar文件
-        curl -L -o gradle/wrapper/gradle-wrapper.jar https://github.com/gradle/gradle/raw/v8.2.2/gradle/wrapper/gradle-wrapper.jar
-        # 验证文件下载成功
+        # 安装系统Gradle来生成完整的wrapper文件
+        sudo apt-get update
+        sudo apt-get install -y gradle
+        
+        # 使用系统Gradle生成完整的wrapper文件
+        gradle wrapper --gradle-version=8.2.2
+        
+        # 验证wrapper文件生成成功
         if [ -f "gradle/wrapper/gradle-wrapper.jar" ]; then
-          echo "Gradle wrapper jar downloaded successfully"
+          echo "Gradle wrapper initialized successfully"
+          ls -la gradle/wrapper/
         else
-          echo "Warning: Gradle wrapper jar download failed, but continuing with build"
+          echo "Warning: Gradle wrapper initialization failed"
+          # 备用方案：手动创建必要的目录结构
+          mkdir -p gradle/wrapper
+          # 下载一个基础的gradle-wrapper.jar
+          curl -L -o gradle/wrapper/gradle-wrapper.jar https://repo.maven.apache.org/maven2/gradle/wrapper/gradle-wrapper/3.1.1/gradle-wrapper-3.1.1.jar
         fi
       
     - name: Cache Gradle packages
